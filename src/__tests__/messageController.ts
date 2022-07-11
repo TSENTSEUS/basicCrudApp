@@ -3,18 +3,19 @@ import * as shutdown from 'http-graceful-shutdown'
 import { DocumentType } from '@typegoose/typegoose'
 import { Message } from '@/models/messageModel'
 import { MongoMemoryServer } from 'mongodb-memory-server'
+import { Mongoose } from 'mongoose'
 import { Server } from 'http'
 import { User } from '@/models/User'
 import runApp from '@/helpers/runApp'
+import runMongo from '@/helpers/mongo'
 
 describe('Crud endpoint', () => {
   let server: Server
   let mongoServer: MongoMemoryServer
-
+  let mongoose: Mongoose
   let author: DocumentType<User>
   let token: string
   let message: DocumentType<Message>
-
   const user = {
     name: 'Mikita',
     email: 'bebra1488@gmail.com',
@@ -22,6 +23,7 @@ describe('Crud endpoint', () => {
 
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create()
+    mongoose = await runMongo(await mongoServer.getUri())
     server = await runApp()
   })
 
